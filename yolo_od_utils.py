@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import os
 
 def filter_outputs(layer_output, confidence):
     """ Pick the most probable class in each box and then filter it by confidence.
@@ -140,7 +141,7 @@ def draw_boxes(image, boxes_coord, nms_idx, scores, classes, labels, colors):
     return(image, text_all)
 
 
-def yolo_object_detection(image_filename, net, confidence, threshold, labels, colors):
+def yolo_object_detection(image_filename, net, confidence, threshold, labels, colors, outputDirectory):
     """ Apply YOLO object detection on a image_file.
         image_filename : Input image file to read
         net : YOLO v3 network object
@@ -154,7 +155,12 @@ def yolo_object_detection(image_filename, net, confidence, threshold, labels, co
     # image is an array of image data (row, column, channel)
     image = cv2.imread(image_filename)
 
-    (H, W) = image.shape[:2]
+    try:
+        (H, W) = image.shape[:2]
+    except:
+        # print("An exception occurred reading {}",image_filename)
+        return None
+
 
     # preprocess image data with rescaling and resizing to fit YOLO input shape
     # OpenCV assumes BGR images: we have to convert to RGB, with swapRB=True
@@ -194,7 +200,21 @@ def yolo_object_detection(image_filename, net, confidence, threshold, labels, co
 
     # Draw boxes on the image
     image, text_list = draw_boxes(image, boxes_coord, nms_idx, scores, classes, labels, colors)
-    print("{} : {}".format(image_filename, text_list), flush=True)
-    cv2.imwrite("{}_YOLO.jpg".format(image_filename.split('.')[0]), image)
-    cv2.imshow("{}".format(image_filename, image), image)
-    cv2.waitKey(0)
+
+    directory, fn = os.path.split(image_filename)
+    filename = fn.split('.')[0]
+    extension = fn.split('.')[1]
+
+    if(len(text_list) > 0):
+        print("{} : {}".format(filename, text_list), flush=True)
+        # Write text list to file
+        textFile = "{}/{}.txt".format(outputDirectory, filename), image
+        f = open(textFile[0].encode("utf-8") , "w")
+        for t in text_list:
+            f.write(''.join(str(s) for s in t) + '\n')
+        f.close()
+        # Write detection image to file
+        cv2.imwrite("{}/{}.jpg".format(outputDirectory, filename), image)
+    else:
+        print("No objects detected in ",filename)
+    os.remove(image_filename)

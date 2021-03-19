@@ -1,0 +1,1 @@
+{"name":"node-red-contrib-wfwatch","dist-tags":{"latest":"0.0.1"},"versions":{"0.0.1":{"name":"node-red-contrib-wfwatch","version":"0.0.1","dependencies":{"watchr":"2.4.13"},"dist":{"shasum":"303d9bcc6317ca98760aea64bf6af49aee82c3f1","tarball":"https://registry.npmjs.org/node-red-contrib-wfwatch/-/node-red-contrib-wfwatch-0.0.1.tgz"}}},"modified":"2016-04-18T10:28:41.649Z"}

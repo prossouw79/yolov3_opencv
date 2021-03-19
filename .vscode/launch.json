@@ -1,0 +1,18 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "yolo_od.py",
+            "console": "integratedTerminal",
+            "env": {
+                "RTSP_URL": "rtsp://192.168.10.133:8080/video/h264"
+            }
+        }
+    ]
+}
