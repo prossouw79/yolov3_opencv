@@ -19,16 +19,17 @@ WORKDIR /app
 RUN mkdir input
 RUN mkdir output
 
-RUN pip3 install --upgrade pip
+RUN pip3 install --upgrade pip setuptools wheel
 
-RUN pip3 install setuptools \
-         wheel \
-         scikit-build
+RUN pip3 install    \
+      scikit-build  \
+      scikit-image  \
+      imutils       \
+      numpy         \
+      imagehash     \
+      watchdog
 
-RUN pip3 install numpy      \
-         imageio-ffmpeg     \
-         watchdog
-
-COPY . .
+COPY [ "./yolo" , "./yolo/"]
+COPY ["yolo_od.py","yolo_od_utils.py","getframesfromRTSP.sh", "./"]
 
 CMD [ "python3", "yolo_od.py"]

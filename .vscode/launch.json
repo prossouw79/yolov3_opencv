@@ -10,9 +10,7 @@
             "request": "launch",
             "program": "yolo_od.py",
             "console": "integratedTerminal",
-            "env": {
-                "RTSP_URL": "rtsp://192.168.10.133:8080/video/h264"
-            }
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

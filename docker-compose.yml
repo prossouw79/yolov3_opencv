@@ -2,21 +2,20 @@ version: "3.3"
 services:
 
   rtsp-yolo-python-cam1:
-      image: pietersynthesis/nvidia-yolo-rtsp-python
       build: .
-      environment: 
-        - RTSP_URL="${RTSP_URL}"
+      env_file: .env
       networks: 
         camera-stream-network:
       volumes: 
       - ./output:/app/output
+      - frame-buffer-volatile:/app/input
       command: python3 yolo_od.py
       restart: unless-stopped
-      # deploy:
-      #     resources:
-      #         limits:
-      #           cpus: '4'
-      #           memory: 512M
+      deploy:
+          resources:
+              limits:
+                cpus: '3'
+                memory: 512M
 
   node-red:
     image: nodered/node-red:latest
@@ -30,14 +29,15 @@ services:
     restart: unless-stopped
     depends_on:
       - rtsp-yolo-python-cam1
-# volumes:
-#     # This RAM drive is to store constant stream of images while not burning out the storage
-#     frame-buffer-volatile:
-#       driver_opts:
-#         type: tmpfs
-#         device: tmpfs
-#         # 128MB (in bytes)
-#         # size: 134217728
+
+volumes:
+    # This RAM drive is to store constant stream of images while not burning out the storage
+    frame-buffer-volatile:
+      driver_opts:
+        type: tmpfs
+        device: tmpfs
+        # 128MB (in bytes)
+        # size: 134217728
 
 networks:
   camera-stream-network:

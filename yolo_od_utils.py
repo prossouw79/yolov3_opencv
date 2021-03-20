@@ -1,6 +1,10 @@
 import numpy as np
 import cv2
 import os
+from PIL import Image
+import imagehash
+from skimage.metrics import structural_similarity
+import datetime
 
 def filter_outputs(layer_output, confidence):
     """ Pick the most probable class in each box and then filter it by confidence.
@@ -8,7 +12,8 @@ def filter_outputs(layer_output, confidence):
         confidence : confidence threshold (float)
     """
     box_xywh = np.array(layer_output[:, :4])
-    box_confidence = np.array(layer_output[:, 4]).reshape(layer_output.shape[0], 1)
+    box_confidence = np.array(layer_output[:, 4]).reshape(
+        layer_output.shape[0], 1)
     box_class_probs = np.array(layer_output[:, 5:])
 
     box_scores = box_confidence * box_class_probs
@@ -22,6 +27,7 @@ def filter_outputs(layer_output, confidence):
     xywh_filtered = box_xywh[np.nonzero(filtering_mask)]
 
     return (xywh_filtered, score_filtered, class_filtered)
+
 
 def iou(box1, box2):
     """ Caculate IoU between box1 and box2
@@ -48,6 +54,66 @@ def iou(box1, box2):
     iou = inter_area / union_area
 
     return iou
+
+
+# Prepares image for analysis by resizing it and turning it to greyscale
+def CV_PREP(imgPath, height):
+    img = cv2.imread(imgPath)
+    img = image_resize(img, height)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    return img
+
+def image_resize(image, width = None, height = None, inter = cv2.INTER_AREA):
+    # initialize the dimensions of the image to be resized and
+    # grab the image size
+    dim = None
+    (h, w) = image.shape[:2]
+
+    # if both the width and height are None, then return the
+    # original image
+    if width is None and height is None:
+        return image
+
+    # check to see if the width is None
+    if width is None:
+        # calculate the ratio of the height and construct the
+        # dimensions
+        r = height / float(h)
+        dim = (int(w * r), height)
+
+    # otherwise, the height is None
+    else:
+        # calculate the ratio of the width and construct the
+        # dimensions
+        r = width / float(w)
+        dim = (width, int(h * r))
+
+    # resize the image
+    resized = cv2.resize(image, dim, interpolation = inter)
+
+    # return the resized image
+    return resized
+
+# the 'Mean Squared Error' between the two images is the
+# sum of the squared difference between the two images;
+# NOTE: the two images must have the same dimension
+def mse(imageApath, imageBpath, resizeHeight):   
+    imageA = CV_PREP(imageApath, resizeHeight)
+    imageB = CV_PREP(imageBpath, resizeHeight)
+    err = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)
+    err /= float(imageA.shape[0] * imageA.shape[1])
+    # return the MSE, the lower the error, the more "similar"
+    # the two images are
+    return round(err,3)
+
+
+def ssim(imageApath, imageBpath, resizeHeight):
+    imageA = CV_PREP(imageApath, resizeHeight)
+    imageB = CV_PREP(imageBpath, resizeHeight)
+
+    s = structural_similarity(imageA, imageB)
+    return round(s,3)
 
 
 def yolo_non_max_supression(boxes, scores, confidence_threshold, iou_threshold):
@@ -202,11 +268,14 @@ def yolo_object_detection(image_filename, net, confidence, threshold, labels, co
     image, text_list = draw_boxes(image, boxes_coord, nms_idx, scores, classes, labels, colors)
 
     directory, fn = os.path.split(image_filename)
-    filename = fn.split('.')[0]
+    # filename = fn.split('.')[0]
+    currentDT = datetime.datetime.now()
+    
+    filename = currentDT.strftime("%Y-%m-%d %H:%M:%S")
     extension = fn.split('.')[1]
 
     if(len(text_list) > 0):
-        print("{} : {}".format(filename, text_list), flush=True)
+        # print("{} : {}".format(filename, text_list), flush=True)
         # Write text list to file
         textFile = "{}/{}.txt".format(outputDirectory, filename), image
         f = open(textFile[0].encode("utf-8") , "w")
@@ -215,6 +284,6 @@ def yolo_object_detection(image_filename, net, confidence, threshold, labels, co
         f.close()
         # Write detection image to file
         cv2.imwrite("{}/{}.jpg".format(outputDirectory, filename), image)
+        return True
     else:
-        print("No objects detected in ",filename)
-    os.remove(image_filename)
+        return False
