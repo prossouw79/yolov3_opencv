@@ -702,7 +702,7 @@
     "node-red-contrib-fs-ops": {
         "name": "node-red-contrib-fs-ops",
         "version": "1.6.0",
-        "local": false,
+        "local": true,
         "nodes": {
             "fs-ops": {
                 "name": "fs-ops",
