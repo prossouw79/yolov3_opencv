@@ -11,21 +11,23 @@ services:
       - frame-buffer-volatile:/app/input
       command: python3 yolo_od.py
       restart: unless-stopped
-      deploy:
-          resources:
-              limits:
-                cpus: '3'
-                memory: 512M
+      #deploy:
+      #    resources:
+      #        limits:
+      #          cpus: '3'
+      #          memory: 512M
 
   node-red:
     image: nodered/node-red:latest
     environment:
       - TZ=Africa/Johannesburg
       - PORT=2880
+      - AUTHORIZED_TELEGRAM_CLIENTS=${AUTHORIZED_TELEGRAM_CLIENTS}
     network_mode: host
     volumes:
       - ./node-red-data:/data
       - ./output:/detected
+      - frame-buffer-volatile:/live
     restart: unless-stopped
     depends_on:
       - rtsp-yolo-python-cam1

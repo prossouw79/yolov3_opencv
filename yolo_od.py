@@ -24,17 +24,6 @@ parser.add_argument('-c', '--confidence', type=float, default=0.65)
 parser.add_argument('-t', '--threshold', type=float, default=0.5)
 args = parser.parse_args()
 
-#Clean up input directory of older files
-files_in_input_dir = os.listdir(args.input)
-now = time.time()
-for f in files_in_input_dir:
-    if f.lower().endswith(".jpg"):
-        path = args.input + "/" + f
-        file_age = os.stat(path).st_mtime
-        if file_age < now - 10:
-            if os.path.isfile(path):
-                os.unlink(path)
-
 print('Starting GStreamer script to pull images from:', os.getenv('RTSP_URL'))
 # Run script that uses gstreamer to capture frames
 p = subprocess.Popen("./getframesfromRTSP.sh")
@@ -73,8 +62,7 @@ def on_created(event):
         global countdown
                 
         if(len(frameBuffer) > args.bufferFrames):
-            frameToDelete = frameBuffer.pop(0)
-            os.unlink(frameToDelete)
+            frameBuffer.pop(0)
 
         if(countdown > 0):
             print("Countdown ", countdown)
@@ -97,6 +85,16 @@ def on_created(event):
                         countdown = 10
 
         frameBuffer.append(img)
+        #Clean up input directory of older files
+        files_in_input_dir = os.listdir(args.input)
+        now = time.time()
+        for f in files_in_input_dir:
+            if f.lower().endswith(".jpg"):
+                path = args.input + "/" + f
+                file_age = os.stat(path).st_mtime
+                if file_age < (now - 90):
+                    if os.path.isfile(path):
+                        os.unlink(path)
 
 
 patternMatchingEventHandler.on_created = on_created

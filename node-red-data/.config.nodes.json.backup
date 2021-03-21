@@ -685,7 +685,7 @@
     "node-red-contrib-wfwatch": {
         "name": "node-red-contrib-wfwatch",
         "version": "0.0.1",
-        "local": false,
+        "local": true,
         "nodes": {
             "wfwatch": {
                 "name": "wfwatch",
