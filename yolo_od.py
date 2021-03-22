@@ -18,7 +18,7 @@ from yolo_od_utils import mse
 parser = argparse.ArgumentParser()
 parser.add_argument('-id', '--input', type=str, default='input')
 parser.add_argument('-od', '--output', type=str, default='output')
-parser.add_argument('-mse', '--mseThreshold', type=float, default=0.2)
+parser.add_argument('-mse', '--mseThreshold', type=float, default=0.1)
 parser.add_argument('-bf', '--bufferFrames', type=int, default=2)
 parser.add_argument('-c', '--confidence', type=float, default=0.65)
 parser.add_argument('-t', '--threshold', type=float, default=0.5)
