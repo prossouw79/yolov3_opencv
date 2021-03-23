@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import os
+import shutil
 from PIL import Image
 import imagehash
 from skimage.metrics import structural_similarity

@@ -7,7 +7,6 @@ import os
 import time
 import sys
 import glob
-import subprocess
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 from yolo_od_utils import yolo_object_detection
@@ -23,10 +22,6 @@ parser.add_argument('-bf', '--bufferFrames', type=int, default=2)
 parser.add_argument('-c', '--confidence', type=float, default=0.65)
 parser.add_argument('-t', '--threshold', type=float, default=0.5)
 args = parser.parse_args()
-
-print('Starting GStreamer script to pull images from:', os.getenv('RTSP_URL'))
-# Run script that uses gstreamer to capture frames
-p = subprocess.Popen("./getframesfromRTSP.sh")
 
 # set filenames for the model
 coco_names_file = "yolo/coco.names"

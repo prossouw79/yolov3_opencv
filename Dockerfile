@@ -30,6 +30,6 @@ RUN pip3 install    \
       watchdog
 
 COPY [ "./yolo" , "./yolo/"]
-COPY ["yolo_od.py","yolo_od_utils.py","getframesfromRTSP.sh", "./"]
+COPY ["yolo_od.py","yolo_od_utils.py", "./"]
 
 CMD [ "python3", "yolo_od.py"]
