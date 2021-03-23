@@ -13,4 +13,5 @@ df | grep $PWD/input
 echo "Starting Containers"
 docker-compose down 
 docker-compose up --build -d
-docker-compose logs -f
+
+watch -n 1 "tree input/"
