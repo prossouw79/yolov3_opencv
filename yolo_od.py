@@ -87,7 +87,7 @@ def on_created(event):
             if f.lower().endswith(".jpg"):
                 path = args.input + "/" + f
                 file_age = os.stat(path).st_mtime
-                if file_age < (now - 90):
+                if file_age < (now - 10):
                     if os.path.isfile(path):
                         os.unlink(path)
 

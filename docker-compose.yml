@@ -5,7 +5,7 @@ services:
     image: restreamio/gstreamer:1.18.4.0-prod
     env_file: .env
     volumes: 
-      - frame-buffer-volatile:/input
+      - /mnt/ramdisk:/input
     command: gst-launch-1.0 rtspsrc location=$RTSP_URL latency=200 ! queue ! rtph264depay ! avdec_h264 ! videorate ! video/x-raw,framerate=1000/1001 ! jpegenc ! multifilesink location="./input/frame%020d.jpg"
 
   yolo-object-detection:
@@ -15,7 +15,7 @@ services:
       camera-stream-network:
     volumes: 
     - ./output:/app/output
-    - frame-buffer-volatile:/app/input
+    - /mnt/ramdisk:/app/input
     command: python3 yolo_od.py
     restart: unless-stopped
     depends_on: 
@@ -36,17 +36,10 @@ services:
     volumes:
       - ./node-red-data:/data
       - ./output:/detected
-      - frame-buffer-volatile:/live
+      - /mnt/ramdisk:/live
     restart: unless-stopped
     depends_on:
       - yolo-object-detection
-
-volumes:
-    # This RAM drive is to store constant stream of images while not burning out the storage
-    frame-buffer-volatile:
-      driver_opts:
-        type: tmpfs
-        device: tmpfs
 
 networks:
   camera-stream-network:
