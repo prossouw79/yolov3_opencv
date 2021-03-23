@@ -7,3 +7,5 @@ yolo/yolov3.weights
 output/
 
 input/
+
+node-red-data/latest.jpg

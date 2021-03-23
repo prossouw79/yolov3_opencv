@@ -57,7 +57,8 @@ def on_created(event):
         global countdown
                 
         if(len(frameBuffer) > args.bufferFrames):
-            frameBuffer.pop(0)
+            frameToDelete = frameBuffer.pop(0)
+            os.remove(frameToDelete)
 
         if(countdown > 0):
             print("Countdown ", countdown)

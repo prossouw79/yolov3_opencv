@@ -32,7 +32,7 @@
 14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:259:5)
 15 verbose pkgid node-red-docker@1.2.9
 16 verbose cwd /usr/src/node-red
-17 verbose Linux 5.8.0-7630-generic
+17 verbose Linux 5.8.0-7642-generic
 18 verbose argv "/usr/local/bin/node" "/usr/local/bin/npm" "--no-update-notifier" "--no-fund" "start" "--cache" "/data/.npm" "--" "--userDir" "/data"
 19 verbose node v10.23.2
 20 verbose npm  v6.14.10
