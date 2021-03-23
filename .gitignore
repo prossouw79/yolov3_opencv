@@ -9,3 +9,5 @@ output/
 input/
 
 node-red-data/latest.jpg
+
+node-red-data/.npm/_logs/

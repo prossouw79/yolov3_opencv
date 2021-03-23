@@ -50,7 +50,18 @@ patternMatchingEventHandler = PatternMatchingEventHandler(
 
 
 def on_created(event):
-    time.sleep(0.1)
+    #Clean up input directory of older files
+    files_in_input_dir = os.listdir(args.input)
+    now = time.time()
+    for f in files_in_input_dir:
+        if f.lower().endswith(".jpg"):
+            path = args.input + "/" + f
+            file_age = os.stat(path).st_mtime
+            if file_age < (now - 30):
+                print("Deleting old file",path)
+                if os.path.isfile(path):
+                    os.unlink(path)
+    
     img = event.src_path.split('.jpg', 1)[0] + '.jpg'
     if(os.path.isfile(img)):
         global frameBuffer
@@ -64,7 +75,7 @@ def on_created(event):
             print("Countdown ", countdown)
             objects_detected = yolo_object_detection(img, net, args.confidence, args.threshold, LABELS, COLORS, args.output)
             if(objects_detected):
-                countdown = 10
+                countdown = 2
             else:
                 countdown = countdown - 1
         else:
@@ -78,20 +89,9 @@ def on_created(event):
                     # print("Frame change detected: ", frameDiffMSE)
                     objects_detected = yolo_object_detection(img, net, args.confidence, args.threshold, LABELS, COLORS, args.output)
                     if(objects_detected):
-                        countdown = 10
+                        countdown = 2
 
         frameBuffer.append(img)
-        #Clean up input directory of older files
-        files_in_input_dir = os.listdir(args.input)
-        now = time.time()
-        for f in files_in_input_dir:
-            if f.lower().endswith(".jpg"):
-                path = args.input + "/" + f
-                file_age = os.stat(path).st_mtime
-                if file_age < (now - 10):
-                    if os.path.isfile(path):
-                        os.unlink(path)
-
 
 patternMatchingEventHandler.on_created = on_created
 

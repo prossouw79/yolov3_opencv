@@ -5,7 +5,7 @@ services:
     image: restreamio/gstreamer:1.18.4.0-prod
     env_file: .env
     volumes: 
-      - /mnt/ramdisk:/input
+      - ./input:/input
     command: gst-launch-1.0 rtspsrc location=$RTSP_URL latency=200 ! queue ! rtph264depay ! avdec_h264 ! videorate ! video/x-raw,framerate=1000/1001 ! jpegenc ! multifilesink location="./input/frame%020d.jpg"
 
   yolo-object-detection:
@@ -15,7 +15,7 @@ services:
       camera-stream-network:
     volumes: 
     - ./output:/app/output
-    - /mnt/ramdisk:/app/input
+    - ./input:/app/input
     command: python3 yolo_od.py
     restart: unless-stopped
     depends_on: 
@@ -36,7 +36,7 @@ services:
     volumes:
       - ./node-red-data:/data
       - ./output:/detected
-      - /mnt/ramdisk:/live
+      - ./input:/live
     restart: unless-stopped
     depends_on:
       - yolo-object-detection
