@@ -45,8 +45,19 @@ patterns = ['*']
 ignore_patterns = ['*.txt', '*.YOLO.jpg']
 ignore_directories = False
 case_sensitive = False
-patternMatchingEventHandler = PatternMatchingEventHandler(
-    patterns, ignore_patterns, ignore_directories, case_sensitive)
+patternMatchingEventHandler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
+
+#Clean up input directory of older files
+files_in_input_dir = os.listdir(args.input)
+now = time.time()
+for f in files_in_input_dir:
+    if f.lower().endswith(".jpg"):
+        path = args.input + "/" + f
+        file_age = os.stat(path).st_mtime
+        if file_age < (now - 30):
+            print("Deleting old file",path)
+            if os.path.isfile(path):
+                os.unlink(path)
 
 
 def on_created(event):
@@ -66,6 +77,8 @@ def on_created(event):
     if(os.path.isfile(img)):
         global frameBuffer
         global countdown
+
+        print('Processing', img)
                 
         if(len(frameBuffer) > args.bufferFrames):
             frameToDelete = frameBuffer.pop(0)

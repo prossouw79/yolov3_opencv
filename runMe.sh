@@ -6,7 +6,7 @@ rm -rf input
 
 echo "Creating INPUT ramdisk"
 mkdir input
-sudo mount -t tmpfs -o rw,size=16M tmpfs $PWD/input
+sudo mount -t tmpfs -o rw,size=512M tmpfs $PWD/input
 
 df | grep $PWD/input
 
